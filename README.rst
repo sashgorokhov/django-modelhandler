@@ -1,5 +1,5 @@
-python-telegram-handler
-***********************
+django-modelhandler
+*******************
 
 .. image:: https://badge.fury.io/py/django-modelhandler.svg
     :target: https://badge.fury.io/py/django-modelhandler
