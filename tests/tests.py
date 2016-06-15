@@ -4,6 +4,7 @@ import os
 from django.test import TestCase
 from modelhandler.handlers import LogModel
 from modelhandler.models import Log
+from modelhandler.utils import LEVEL_TO_NAME
 
 
 class TestModelHandler(TestCase):
@@ -14,6 +15,7 @@ class TestModelHandler(TestCase):
     def get_logger(self, name="", level=logging.DEBUG, handler=None):
         logger = logging.getLogger(name)
         logger.setLevel(level)
+        logger.handlers = list()
         logger.addHandler(handler or self.handler)
         return logger
 
@@ -27,11 +29,10 @@ class TestModelHandler(TestCase):
         self.assertTrue(Log.objects.filter(name=logger.name).exists())
 
     def test_levels(self):
-        self.logger.debug('Info!')
-        for level, levelname in logging._levelToName.items():
+        for level, levelname in LEVEL_TO_NAME.items():
             if not self.logger.isEnabledFor(level):
                 continue
-            self.logger.log(level, "")
+            self.logger.log(level, levelname)
             log = Log.objects.latest()
             self.assertEqual(log.level, level)
             self.assertEqual(log.levelname, levelname)
@@ -48,7 +49,10 @@ class TestModelHandler(TestCase):
 
     def test_filename(self):
         self.logger.debug("")
-        self.assertTrue(Log.objects.filter(filename=os.path.split(__file__)[-1]).exists())
+        filename = os.path.split(__file__)[-1]
+        if filename.endswith('pyc'):
+            filename = filename[:-1]
+        self.assertTrue(Log.objects.filter(filename=filename).exists())
 
     def test_funcname(self):
         self.logger.debug("")

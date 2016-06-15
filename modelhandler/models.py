@@ -1,11 +1,11 @@
 import logging
-
 from django.db import models
+from modelhandler.utils import LEVEL_TO_NAME
 
 
 class Log(models.Model):
     name = models.CharField(max_length=255)
-    level = models.PositiveIntegerField(default=0, choices=logging._levelToName.items())
+    level = models.PositiveIntegerField(default=0, choices=LEVEL_TO_NAME.items())
     message = models.TextField()
     traceback = models.TextField(default=None, null=True, blank=True)
     filename = models.CharField(max_length=255, default=None, null=True, blank=True)
